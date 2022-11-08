@@ -1,0 +1,8 @@
+use samples
+db.createUser(
+{
+	user: "user",
+
+	pwd: "oJfw5sigY3cN",
+
+	roles:[{role: "userAdmin" , db:"samples"}]})

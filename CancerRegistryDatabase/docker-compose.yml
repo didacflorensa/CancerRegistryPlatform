@@ -1,0 +1,23 @@
+version: '3'
+services:
+        database:
+                image: 'mongo:4.0'
+                container_name: 'mongodb-container'
+                environment:
+                        - MONGO_INITDB_DATABASE=database_name #<database name>
+                        - MONGO_INITDB_ROOT_USERNAME=user # <root username>
+                        - MONGO_INITDB_ROOT_PASSWORD=pass # <root password>
+                volumes:
+                        - ./mongo-volume:/data/db
+                ports:
+                        - '27017-27019:27017-27019'
+
+        mongo_seed:
+                image: 'mongo:4.0'
+                links:
+                        - database 
+                volumes:
+                        - ./mongo-seed:/mongo-seed
+                command:
+                        /mongo-seed/import.sh
+

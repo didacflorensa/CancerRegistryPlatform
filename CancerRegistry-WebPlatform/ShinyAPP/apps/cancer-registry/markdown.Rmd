@@ -1,0 +1,376 @@
+---
+title: "Informe dinàmic"
+output: word_document
+always_allow_html: true
+params:
+  n: NA
+  n1: NA
+  n2: NA
+---
+
+```{r, echo=FALSE}
+# The `params` object is available in the document.
+#params$n
+t_tumors <- params$n
+province_map <- params$n1
+loc3_map <- params$n2
+
+is.nan.data.frame <- function(x)
+do.call(cbind, lapply(x, is.nan))
+
+
+# Get number of tumors by patient
+tumors_by_pacient <- aggregate(x=t_tumors$loc3, by = list(t_tumors$id_pacient, t_tumors$sexe), FUN = length)
+colnames(tumors_by_pacient) <- c("id_pacient", "sexe", "n_tumors")
+
+n_patient_with_one_tumor <- tumors_by_pacient[tumors_by_pacient$n_tumors==1,]
+n_patient_with_two_tumor <- tumors_by_pacient[tumors_by_pacient$n_tumors==2,]
+n_patient_with_three_tumor <- tumors_by_pacient[tumors_by_pacient$n_tumors==3,]
+n_patient_with_more_then_three_tumor <- tumors_by_pacient[tumors_by_pacient$n_tumors>3,]
+
+
+
+n_patient = length(unique(t_tumors[, 'id_pacient']))
+n_patient_man = length(unique(t_tumors[t_tumors$sexe==1,][,'id_pacient']))
+n_patient_woman = length(unique(t_tumors[t_tumors$sexe==2,][,'id_pacient']))
+
+
+n_tumors = nrow(t_tumors)
+n_tumors_man = nrow(t_tumors[t_tumors$sexe==1,])
+n_tumors_woman = nrow(t_tumors[t_tumors$sexe==2,])
+
+
+
+
+
+
+```
+
+
+
+
+#### <b>INTRODUCCIÓ</b>
+
+
+
+#### MATERIAL I MÈTODES
+
+
+
+
+#### RESULTATS
+
+
+
+
+
+
+Taula 1
+
+
+
+
+
+```{r,echo=FALSE}
+distribution_patients <- data.frame(
+    c(
+      "Pacients",
+      "Tumors",
+      "Pacients amb doble tumor",
+      "Pacients amb triple tumor"
+    ),
+    c(
+        n_patient_man,
+        n_tumors_man,
+        nrow(n_patient_with_two_tumor[n_patient_with_two_tumor$sexe==1,]),
+        nrow(n_patient_with_three_tumor[n_patient_with_three_tumor$sexe==1,])
+    ),
+    c(
+        round(n_patient_man/n_patient*100, 1),
+        round(n_tumors_man/n_tumors*100, 1),
+        round(nrow(n_patient_with_two_tumor[n_patient_with_two_tumor$sexe==1,])/nrow(n_patient_with_two_tumor)*100, 1),
+        round(nrow(n_patient_with_three_tumor[n_patient_with_three_tumor$sexe==1,])/nrow(n_patient_with_three_tumor)*100, 1)
+    ),
+    c(
+        n_patient_woman,
+        n_tumors_woman,
+        nrow(n_patient_with_two_tumor[n_patient_with_two_tumor$sexe==2,]),
+        nrow(n_patient_with_three_tumor[n_patient_with_three_tumor$sexe==2,])
+    ),
+    c(
+        n_patient_woman/n_patient,
+        n_tumors_woman/n_tumors,
+        nrow(n_patient_with_two_tumor[n_patient_with_two_tumor$sexe==1,])/nrow(n_patient_with_two_tumor),
+        nrow(n_patient_with_three_tumor[n_patient_with_three_tumor$sexe==1,])/nrow(n_patient_with_three_tumor)
+    ),
+    c(
+        n_patient,
+        n_tumors,
+        nrow(n_patient_with_two_tumor),
+        nrow(n_patient_with_three_tumor)
+    )
+)
+colnames(distribution_patients) <-c("", "Homes", "H%", "Dones", "D%",  "Total")
+
+distribution_patients[is.nan(distribution_patients)] <- 0
+```
+
+```{r,echo=FALSE}
+colnames(distribution_patients) <-c("A", "B", "C", "D", "E",  "F")
+
+```
+
+```{r,echo=FALSE}
+df_dist <- data.frame(distribution_patients)
+ft_distribution_patients <- flextable(df_dist)
+ft_distribution_patients <-  set_header_labels(ft_distribution_patients, values = list(A=" ", B="Homes", C="%", D="Dones", E="%", F="Total"))
+ft_distribution_patients <- autofit(ft_distribution_patients)
+ft_distribution_patients
+
+```
+
+
+
+
+ 
+
+
+Taula 2
+
+ 
+
+
+
+
+```{r,echo=FALSE}
+province_tumor_table <- aggregate(x=t_tumors$id_tumor, by = list(t_tumors$cp, t_tumors$province), FUN = length)
+colnames(province_tumor_table) <- c("Codigo", "Provincia", "n_tumors")
+province_tumor_table <- aggregate(x=province_tumor_table$n_tumors, by = province_tumor_table, FUN = function(x){ round(x/nrow(t_tumors)*100, 1)})
+colnames(province_tumor_table) <- c("Codigo", "Provincia", "n_tumors", "%")
+province_tumor_table <- province_tumor_table[order(-province_tumor_table[,"n_tumors"]),]
+province_tumor_table[is.nan(province_tumor_table)] <- 0
+
+
+colnames(province_tumor_table) <- c("A", "B", "C", "D")
+
+
+df_province_tumor_table <- data.frame(province_tumor_table)
+ft_province_tumor_table <- flextable(df_province_tumor_table)
+ft_province_tumor_table <-  set_header_labels(ft_province_tumor_table, values = list(A="Codi", B="Provincia", C="N.Tumors", D="%"))
+
+ft_province_tumor_table <- autofit(ft_province_tumor_table)
+ft_province_tumor_table
+
+
+```
+
+
+
+
+### FIGURA 1
+#### Distribució dels tumors per edat i sexe en residents a Lleida del Registre hospitalari de tumors
+
+
+
+
+
+
+
+
+
+
+```{r,echo=FALSE}
+tumor_by_age <- aggregate(x=t_tumors$id_tumor, by = list(t_tumors$age, t_tumors$sexe), FUN = length)
+colnames(tumor_by_age) <- c("age", "sexe", "n_tumors")
+tumor_by_age <- aggregate(x=tumor_by_age$age, by = tumor_by_age, FUN = function(x){
+    aux_x <- as.numeric(x)
+    if(aux_x>=85){
+        ">=85"
+    }else{
+        aux_x <- as.integer(aux_x/5)
+        paste(aux_x*5, "a", aux_x*5+4)   
+    }
+})
+colnames(tumor_by_age) <- c("age", "sexe", "n_tumors", "Range")
+
+
+tumor_by_age <- tumor_by_age[order(-tumor_by_age[,"age"]),]
+
+
+tumor_by_age <- aggregate(x=tumor_by_age$n_tumors, by = list(tumor_by_age$Range, tumor_by_age$sexe), FUN = sum)
+colnames(tumor_by_age) <- c("Range", "Sexe", "Casos")
+
+
+pirmide = data.frame(Range="0 a 4", Home=0 ,Dona=0, Total=0)
+p_ranges <- c("0 a 4")
+names(pirmide) <- c("Range", "Home", "Dona", "Total")
+for(i in seq(5,80, by=5)){
+   pirmide <- rbind(pirmide, data.frame(Range=paste(i,"a",i+4), Home=0 ,Dona=0, Total=0))
+   p_ranges <- rbind(p_ranges, paste(i,"a",i+4))
+}
+pirmide <- rbind(pirmide, data.frame(Range=">=85", Home=0 ,Dona=0, Total=0))
+p_ranges <- rbind(p_ranges, ">=85") 
+for(i in 1:nrow(tumor_by_age)){
+    # 2 -> Sexe
+    if(tumor_by_age[i,][["Sexe"]]==1){
+        pirmide[pirmide$Range==tumor_by_age[i,][["Range"]],][,2] <- tumor_by_age[i,][["Casos"]]
+    }else{
+        pirmide[pirmide$Range==tumor_by_age[i,][["Range"]],][,3] <- tumor_by_age[i,][["Casos"]]
+    }
+    pirmide[pirmide$Range==tumor_by_age[i,][["Range"]],][,4] <- pirmide[pirmide$Range==tumor_by_age[i,][["Range"]],][,4] + tumor_by_age[i,][["Casos"]]
+}
+pirmide$Range <- factor(pirmide$Range,levels = p_ranges)
+p_dona <- data.frame(pirmide[,c("Range", "Dona")])
+p_home <- data.frame(pirmide[,c("Range", "Home")])
+
+ggplot(data=pirmide, aes(x=Range, y=Total,fill=Total)) + 
+geom_bar(data=pirmide, stat = "identity", aes(y=Dona, fill="Dona")) + # + scale_fill_manual(values=c("#DE0E67",)) 
+geom_bar(data=pirmide, stat = "identity", aes(y=Home*-1, fill="Home")) +
+scale_x_discrete("Rang d'edat") +
+scale_y_continuous("Total",breaks=seq(-2000,2000,200),labels=abs(seq(-2000,2000,200))) +
+theme(legend.position="bottom") +
+coord_flip()
+```
+
+
+ 
+
+### Taula 3
+#### Distribució de pacients i tumors per sexe del Registre hospitalari de tumors 
+
+
+```{r,echo=FALSE}
+        
+        
+        pellMelanoma <- list("M-87203", "M-87213", "M-87423",
+                        "M-87433", "M-87443", "M-87453",
+                        "M-87723", "M-87223", "M-87233",
+                        "M-87303", "M-87403", "M-87413",
+                        "M-87463", "M-87613", "M-87703",
+                        "M-87713", "M-87803")
+
+        tumor_by_loc3_aux1 <- t_tumors[c("id_tumor", "loc3", "morf", "sexe")]
+
+        tumor_by_loc3_aux <- na.omit(tumor_by_loc3_aux1) 
+        for(i in 1:length(pellMelanoma)){
+            if(nrow(tumor_by_loc3_aux[(tumor_by_loc3_aux$loc3=="C44" & tumor_by_loc3_aux$morf==pellMelanoma[[i]]),])!=0){
+                tumor_by_loc3_aux[(tumor_by_loc3_aux$loc3=="C44" & tumor_by_loc3_aux$morf==pellMelanoma[[i]]),]['loc3'] <- "C44-1"
+            } 
+        }
+        
+        
+        
+        tumor_by_loc3 <- aggregate(x=tumor_by_loc3_aux$id_tumor, by = list(tumor_by_loc3_aux$loc3, tumor_by_loc3_aux$sexe), FUN = length)
+        colnames(tumor_by_loc3) <- c("loc3", "sexe", "n_tumors")
+        tumor_by_loc3_male = subset(tumor_by_loc3, sexe==1)[,c("loc3", "n_tumors")]
+        tumor_by_loc3_female = subset(tumor_by_loc3, sexe==2)[,c("loc3", "n_tumors")]
+        colnames(tumor_by_loc3_male) <- c("loc3", "Home")
+        colnames(tumor_by_loc3_female) <- c("loc3", "Dona")
+        tumor_by_loc3_male <- merge(data.frame(loc3=unique(tumor_by_loc3[,"loc3"])),tumor_by_loc3_male,all.x=TRUE,by.x=c("loc3"),by.y=c("loc3"))
+        tumor_by_loc3 <- merge(tumor_by_loc3_male,tumor_by_loc3_female,all.x=TRUE,by.x=c("loc3"),by.y=c("loc3"))
+        tumor_by_loc3[, c("loc3")] <- sapply(tumor_by_loc3[, c("loc3")], as.character)
+        tumor_by_loc3[is.na(tumor_by_loc3)] <- 0
+        tumor_by_loc3$Total <- tumor_by_loc3$Home + tumor_by_loc3$Dona
+        tumor_by_loc3$"Total%" <- round((tumor_by_loc3$Total / n_tumors) *100, 2)
+        tumor_by_loc3$"Home%" <- round((tumor_by_loc3$Home / n_tumors_man) *100, 2)
+        tumor_by_loc3$"Dona%" <- round((tumor_by_loc3$Dona / n_tumors_woman) *100, 2)
+        tumor_by_loc3$loc3_desc <- lapply(tumor_by_loc3$loc3, function(x)loc3_map[x])
+        tumor_by_loc3[, c("loc3_desc")] <- sapply(tumor_by_loc3[, c("loc3_desc")], as.character)
+        tumor_by_loc3 <- tumor_by_loc3[order(tumor_by_loc3[,"loc3"]),]
+
+        if(nrow(tumor_by_loc3[tumor_by_loc3$loc3=="C44-1",])!=0){
+            tumor_by_loc3[tumor_by_loc3$loc3=="C44-1",]["loc3_desc"] <- "Pell melanoma"  
+        }
+        
+        if(nrow(tumor_by_loc3[tumor_by_loc3$loc3=="C44",])!=0){
+            tumor_by_loc3[tumor_by_loc3$loc3=="C44",]["loc3_desc"] <- "Pell No melanoma"
+        }
+                                
+        if(nrow(tumor_by_loc3[tumor_by_loc3$loc3=="C44-1",])){
+            tumor_by_loc3[tumor_by_loc3$loc3=="C44-1",]["loc3"] <- "C44" 
+        }
+
+
+        tumor_by_loc3_oder_by_total <- tumor_by_loc3 <- tumor_by_loc3[order(-tumor_by_loc3[,"Total"]),]
+        
+        reordered <- data.frame(
+          c(tumor_by_loc3_oder_by_total$loc3),
+          c(tumor_by_loc3_oder_by_total$loc3_desc),
+          c(tumor_by_loc3_oder_by_total$Home),
+          c(tumor_by_loc3_oder_by_total['Home%']),
+          c(tumor_by_loc3_oder_by_total$Dona),
+          c(tumor_by_loc3_oder_by_total['Dona%'])
+          )
+        names(reordered) <- c("A", "B", "C", "D", "E", "F")
+        
+
+        df_reordered <- data.frame(reordered)
+        ft_reordered <- flextable(df_reordered)
+
+        ft_reordered <-  set_header_labels(ft_reordered, values = list(A="Codi", B="Descripcio", C="Homes", D="%", E="Dones", F="%"))
+
+        ft_reordered <- autofit(ft_reordered)
+
+        ft_reordered
+
+```
+
+
+
+ 
+
+
+
+### Figura 2
+#### Rànquing de localitzacions tumorals en homes residents a Lleida del Registre hospitalari de tumors (sense pell no melanoma) 
+
+
+
+
+
+```{r,echo=FALSE}
+tumor_by_loc3_oder_by_total_home <- head(tumor_by_loc3_oder_by_total[tumor_by_loc3_oder_by_total$Home!=0,], 15)
+ggplot(data=tumor_by_loc3_oder_by_total_home, aes(x=reorder(loc3_desc, Home), y=Home)) + 
+geom_bar(stat = "identity", fill=c("#2270BC")) + xlab("") +
+scale_y_continuous("Total",breaks=seq(-2000,2000,50),labels=abs(seq(-2000,2000,50))) +
+coord_flip()
+```
+
+
+
+
+ 
+
+
+
+
+
+### Figura 3
+
+#### Rànquing de localitzacions tumorals en dones residents a Lleida del Registre hospitalari de tumors (sense pell no melanoma) 
+
+
+
+
+```{r,echo=FALSE}
+tumor_by_loc3_oder_by_total_dona <- head(tumor_by_loc3_oder_by_total[tumor_by_loc3_oder_by_total$Dona!=0,],15)
+ggplot(data=tumor_by_loc3_oder_by_total_dona, aes(x=reorder(loc3_desc, Dona), y=Dona)) + 
+geom_bar(stat = "identity", fill=c("#DE0E67")) +  xlab("") +
+scale_y_continuous("Total",breaks=seq(-2000,2000,50),labels=abs(seq(-2000,2000,50))) +
+coord_flip()
+```
+
+
+
+
+#### DISCUSSIÓ
+
+
+
+```{r,echo=FALSE}
+
+```
+
+
+
+ 

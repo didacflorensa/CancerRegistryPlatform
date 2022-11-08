@@ -1,0 +1,42 @@
+{
+  "name": "users-service",
+  "version": "1.0.0",
+  "description": "This service aims to manage users in Registre de cancer",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 0 -R spec src/**/*.spec.js",
+    "start": "node  --inspect=0.0.0.0 src/index.js",
+    "lint": "standard --verbose | snazzy",
+    "node-debug": "DEBUG=express* node src/index.js",
+    "chrome-debug": "node --debug-brk --inspect src/index.js"
+  },
+  "keywords": [
+    "api",
+    "ldap",
+    "health",
+    "auth"
+  ],
+  "author": "Jordi Mateo Fornes <jordi.mateo@udl.cat> (@MatForJordi)",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.13.1",
+    "mocha": "^6.2.3",
+    "should": "^11.1.2",
+    "snazzy": "^6.0.0",
+    "standard": "^8.6.0",
+    "supertest": "^2.0.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "helmet": "^3.23.3",
+    "http-status": "^0.2.5",
+    "method-override": "^3.0.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^1.19.4",
+    "passport": "^0.5.0",
+    "passport-ldapauth": "^3.0.1"
+  }
+}

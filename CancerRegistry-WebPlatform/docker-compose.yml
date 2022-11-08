@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  server:
+      build:
+        context: ./server/
+        dockerfile: Dockerfile
+      container_name: server
+      restart: unless-stopped
+      environment:
+        - MONGO_USERNAME=user
+        - MONGO_PASSWORD=password
+        - MONGO_HOSTNAME=database_name
+        - MONGO_PORT=27017
+        - MONGO_DB=samples
+      ports:
+        - "3000:3000"
+        - "9229:9229"
+      command: npm start
+
+  users-service:
+      build:
+        context: ./users-service/
+        dockerfile: Dockerfile
+      container_name: users-service
+      restart: unless-stopped 
+      ports:
+        - "3001:3001"
+        - "9230:9229"
+      command: npm start
+
+  shiny-app:
+    container_name: cancer-shiny-app
+    build:
+      context: ./ShinyAPP
+      dockerfile: Dockerfile
+    ports:
+      - "3838:3838"
+    volumes:
+      - ./ShinyAPP/logs:/var/log/shiny-server
+      - ./ShinyAPP/apps:/srv/shiny-server 
+
+volumes:
+  node_modules:
