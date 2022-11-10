@@ -16,9 +16,9 @@ This repository contains the design and implementation of a shiny app to assist 
 
 This repository contains all the code, scripts and services, such as the front-end and back-end, to deploy the cancer web platform.
 
-* CancerRegistry-WebPlatform: This folder contains the scripts to deploy the API and the RShiny service (front-end views). The API was implemented by NodeJS. The RShiny platform is based on R language.
+* CancerRegistry-WebPlatform: This folder contains the scripts to deploy the API and the RShiny service (front-end views). The API was implemented by NodeJS. The RShiny platform is based on the R language.
 
-* CancerRegistryDatabase: This folder contains the scripts to create and deploy database. It is a non-relational database based on MongoDB.
+* CancerRegistryDatabase: This folder contains the scripts to create and deploy the database. It is a non-relational database based on MongoDB. This directory also includes a script to import the data from a CSV file.
 
 ## Deployment
 
