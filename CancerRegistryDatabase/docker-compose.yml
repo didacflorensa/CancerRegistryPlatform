@@ -12,12 +12,12 @@ services:
                 ports:
                         - '27017-27019:27017-27019'
 
-        mongo_seed:
-                image: 'mongo:4.0'
-                links:
-                        - database 
-                volumes:
-                        - ./mongo-seed:/mongo-seed
-                command:
-                        /mongo-seed/import.sh
+        #mongo_seed:
+                #image: 'mongo:4.0'
+                #links:
+                #        - database 
+                #volumes:
+                #        - ./mongo-seed:/mongo-seed
+                #command:
+                #        /mongo-seed/import.sh
 
