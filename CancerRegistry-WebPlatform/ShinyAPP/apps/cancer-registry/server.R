@@ -23,6 +23,12 @@ function(input, output){  # <-- SERVER FUNCTION
     #FILTERS
     #Any min
 
+    showModal(modalDialog(
+        title = "Welcome to the analytical web-app for population cancer registries ",
+        "The information used to calculate the next plots and figures is fictional and randomly generated.",
+        easyClose = TRUE,
+        footer = NULL
+    ))
 
     #Comprovar filtres
     checkFilters <- reactive({

@@ -1,4 +1,4 @@
-# Cancer Registry Web Platform
+# PBCR Platform
 
 ## About the team
 
