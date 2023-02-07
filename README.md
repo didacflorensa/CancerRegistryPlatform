@@ -75,3 +75,4 @@ docker-compose up -d
 ```
 
 ## How to cite
+To cite this software, use the CITATION.cff
