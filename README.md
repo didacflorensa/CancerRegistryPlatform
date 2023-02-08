@@ -1,5 +1,7 @@
 # PBCR Platform
 
+[![DOI](https://zenodo.org/badge/563504610.svg)](https://zenodo.org/badge/latestdoi/563504610)
+
 ## About the team
 
 * **Authors**:
